@@ -13,22 +13,32 @@ public class NetExample {
         System.out.println("start ...");
         try {
             ServerSocket serverSocket = new ServerSocket(DEFAULT_PORT);
-            Socket socket = serverSocket.accept();
-            System.out.println("Connection: " + socket);
 
+            while (true) {
+                Socket socket = serverSocket.accept();
+                System.out.println("Connection: " + socket);
+
+                new Thread(() -> processConnection(socket)).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void processConnection(Socket socket) {
+        try {
             Scanner scanner = new Scanner(socket.getInputStream());
             PrintWriter writer = new PrintWriter(socket.getOutputStream());
-
-            while (scanner.hasNextLine()){
+            while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 System.out.println(line);
                 writer.println("OK");
                 writer.flush();
-                if (line.equals("bye")){
+                if (line.equals("bye")) {
                     break;
                 }
             }
-
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
