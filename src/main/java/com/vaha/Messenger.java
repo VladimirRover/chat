@@ -4,7 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Messenger {
+
+    static  ChatClient chat;
     public static void main(String[] args) {
+        chat = new ChatClient();
+        chat.init();
+
         JFrame frame = new JFrame("Chat");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         LayoutManager manager = new BorderLayout();
@@ -16,12 +21,12 @@ public class Messenger {
         JTextField textField = new JTextField(20);
         inputPanel.add(textField);
         textField.addActionListener(e -> {
-            placeText(textArea, textField);
+            sendText(textField);
         });
         JButton sendButton = new JButton("send");
         inputPanel.add(sendButton);
         sendButton.addActionListener(e -> {
-            placeText(textArea, textField);
+            sendText(textField);
         });
         panel.add(inputPanel, BorderLayout.SOUTH);
         panel.setPreferredSize(new Dimension(500, 500));
@@ -30,9 +35,14 @@ public class Messenger {
         frame.setVisible(true);
     }
 
-    private static void placeText(JTextArea textArea, JTextField textField) {
+    private static void sendText(JTextField textField) {
         String text = textField.getText();
         textField.setText("");
-        textArea.append(text + "\n");
+        chat.sendTextToServer(text);
+    }
+
+    private static void placeText(JTextArea textArea, JTextField textField) {
+
+//        textArea.append(text + "\n");
     }
 }
