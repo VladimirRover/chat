@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 public class ChatClient {
 
@@ -20,10 +21,10 @@ public class ChatClient {
             }
         }).start();
 
-        chat.init();
+        chat.init(System.out::println);
     }
 
-    public void init() {
+    public void init(Consumer<String> consumer) {
         try {
             Socket socket = new Socket("localhost", 10000);
 
@@ -33,7 +34,7 @@ public class ChatClient {
             new Thread(() -> {
                 while (serverScanner.hasNextLine()) {
                     String line = serverScanner.nextLine();
-                    System.out.println(line);
+                    consumer.accept(line);
                 }
             }).start();
         } catch (IOException e) {

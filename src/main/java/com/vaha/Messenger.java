@@ -5,16 +5,15 @@ import java.awt.*;
 
 public class Messenger {
 
-    static  ChatClient chat;
-    public static void main(String[] args) {
-        chat = new ChatClient();
-        chat.init();
+    static ChatClient chat;
+    private static JTextArea textArea;
 
+    public static void main(String[] args) {
         JFrame frame = new JFrame("Chat");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         LayoutManager manager = new BorderLayout();
         JPanel panel = new JPanel(manager);
-        JTextArea textArea = new JTextArea();
+        textArea = new JTextArea();
         textArea.setEnabled(false);
         panel.add(textArea, BorderLayout.CENTER);
         JPanel inputPanel = new JPanel();
@@ -33,6 +32,9 @@ public class Messenger {
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
+
+        chat = new ChatClient();
+        chat.init(Messenger::placeText);
     }
 
     private static void sendText(JTextField textField) {
@@ -41,8 +43,7 @@ public class Messenger {
         chat.sendTextToServer(text);
     }
 
-    private static void placeText(JTextArea textArea, JTextField textField) {
-
-//        textArea.append(text + "\n");
+    private static void placeText(String text) {
+        textArea.append(text + "\n");
     }
 }

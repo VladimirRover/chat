@@ -6,7 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class NetExample {
+public class NetServer {
     private static final int DEFAULT_PORT = 10000;
 
     public static void main(String[] args) {
@@ -32,7 +32,7 @@ public class NetExample {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 System.out.println(line);
-                writer.println("OK");
+                writer.println(" > " + line);
                 writer.flush();
                 if (line.equals("bye")) {
                     break;
