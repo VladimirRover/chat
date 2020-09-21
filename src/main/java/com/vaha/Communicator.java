@@ -6,12 +6,12 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
-public class ChatClient {
+public class Communicator {
 
     private PrintWriter writer;
 
     public static void main(String[] args) {
-        ChatClient chat = new ChatClient();
+        Communicator chat = new Communicator();
         Scanner keyboardScanner = new Scanner(System.in);
 
         new Thread(() -> {

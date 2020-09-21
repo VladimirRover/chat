@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class Messenger {
 
-    static ChatClient chat;
+    static Communicator chat;
     private static JTextArea textArea;
 
     public static void main(String[] args) {
@@ -33,7 +33,7 @@ public class Messenger {
         frame.pack();
         frame.setVisible(true);
 
-        chat = new ChatClient();
+        chat = new Communicator();
         chat.init(Messenger::placeText);
     }
 
