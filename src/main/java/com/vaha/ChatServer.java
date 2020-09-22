@@ -20,23 +20,38 @@ public class ChatServer {
         broadcastService = Executors.newCachedThreadPool();
         try {
             ServerSocket serverSocket = new ServerSocket(DEFAULT_PORT);
-
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("Connection: " + socket);
                 new Thread(() -> {
                     String name ="user" + userCount++;
-                    ChatSession chatSession = new ChatSession(name);
+                    ChatSession chatSession = new ChatSession(socket, name);
+
+                    broadcastUserName(chatSession);
+
                     sessions.add(chatSession);
+                    sendNameListToClient(chatSession);
+
                     System.out.println("sessions size: " + sessions.size());
-                    chatSession.processConnection(socket,
-                            ChatServer::broadcast,
-                            ChatServer::removeSession);
+                    chatSession.processConnection(ChatServer::broadcast, ChatServer::removeSession);
                 }).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void broadcastUserName(ChatSession chatSession) {
+        String command = "/add " + chatSession.getName();
+        broadcast(command);
+    }
+
+    private static void sendNameListToClient(ChatSession chatSession) {
+        String nameList = "/list";
+        for (ChatSession s: sessions) {
+            nameList += " " + s.getName();
+        }
+        chatSession.send2client(nameList);
     }
 
     private static void broadcast(String line) {
@@ -49,6 +64,7 @@ public class ChatServer {
 
     private static void removeSession(ChatSession session) {
         sessions.remove(session);
+        broadcast("/remove " + session.getName());
         System.out.println("session removed: " + session);
         System.out.println("sessions size: " + sessions.size());
     }

@@ -25,19 +25,18 @@ public class Messenger {
         JPanel inputPanel = new JPanel();
         JTextField textField = new JTextField(20);
         inputPanel.add(textField);
-        textField.addActionListener(e -> {
-            sendText(textField);
-        });
+        textField.addActionListener(e -> sendText(textField));
 
         JButton sendButton = new JButton("send");
         inputPanel.add(sendButton);
-        sendButton.addActionListener(e -> {
-            sendText(textField);
-        });
+        sendButton.addActionListener(e -> sendText(textField));
 
         panel.add(inputPanel, BorderLayout.SOUTH);
 
         userList = new List(USERS_IN_LIST, false);
+        userList.addActionListener(actionEvent -> {
+            textField.setText(actionEvent.getActionCommand()+ " ");
+        });
 
         panel.add(userList, BorderLayout.WEST);
 
@@ -46,7 +45,7 @@ public class Messenger {
         frame.setVisible(true);
 
         chat = new Communicator();
-        chat.init(Messenger::placeText);
+        chat.init(Messenger::processServerMessage);
     }
 
     private static void sendText(JTextField textField) {
@@ -55,11 +54,30 @@ public class Messenger {
         chat.sendTextToServer(text);
     }
 
-    private static void placeText(String text) {
+    private static void processServerMessage(String text) {
         if (text.startsWith("/name")) {
             String[] words = text.split(" ");
             String userName = words[1];
+            textArea.append("Welcome to chat, " + userName + "\n");
+            return;
+        }
+        if (text.startsWith("/list")){
+            String[] names = text.split(" ");
+            for (int i = 1; i < names.length; i++) {
+                userList.add(names[i]);
+            }
+            return;
+        }
+        if (text.startsWith("/add")){
+            String[] words = text.split(" ");
+            String userName = words[1];
             userList.add(userName);
+            return;
+        }
+        if (text.startsWith("/remove")){
+            String[] words = text.split(" ");
+            String userName = words[1];
+            userList.remove(userName);
             return;
         }
         textArea.append(text + "\n");

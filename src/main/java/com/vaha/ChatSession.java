@@ -8,19 +8,28 @@ import java.util.function.Consumer;
 
 public class ChatSession {
 
-    String name;
+    private String name;
     private PrintWriter writer;
+    private Socket socket;
+    private Scanner scanner;
 
-    public ChatSession(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
-    void processConnection(Socket socket,
-                           Consumer<String> broadcaster,
-                           Consumer<ChatSession> sessionRemover) {
+    public ChatSession(Socket socket, String name) {
+        this.name = name;
+        this.socket = socket;
         try {
-            Scanner scanner = new Scanner(socket.getInputStream());
+            scanner = new Scanner(socket.getInputStream());
             writer = new PrintWriter(socket.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void processConnection(Consumer<String> broadcaster, Consumer<ChatSession> sessionRemover) {
+        try {
             send2client("/name " + name);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
